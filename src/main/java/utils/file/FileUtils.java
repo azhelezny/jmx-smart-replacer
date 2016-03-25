@@ -1,7 +1,5 @@
 package utils.file;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +18,20 @@ public class FileUtils {
         return fileLines;
     }
 
+    public static void writeStringsToFile(List<String> strings, String filePath) throws IOException {
+        File file = new File(filePath);
+        //noinspection ResultOfMethodCallIgnored
+        file.getParentFile().mkdirs();
+        PrintWriter fw = null;
+        try {
+            fw = new PrintWriter(new BufferedWriter(new FileWriter(file, file.exists())));
+            for (String fileLine : strings)
+                fw.println(fileLine);
+        } finally {
+            assert fw != null;
+            fw.close();
+        }
+    }
 
     public static String readFile(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -41,8 +53,10 @@ public class FileUtils {
 
     public static void writeStringsToFile(String str, String filePath) throws IOException {
         File file = new File(filePath);
+        //noinspection ResultOfMethodCallIgnored
         file.getParentFile().mkdirs();
         if (file.exists())
+            //noinspection ResultOfMethodCallIgnored
             file.delete();
         PrintWriter fw = null;
         try {
