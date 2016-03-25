@@ -1,3 +1,7 @@
+package replacers;
+
+import utils.file.FileUtils;
+
 import java.io.IOException;
 
 /**
@@ -5,7 +9,7 @@ import java.io.IOException;
  */
 public class TestChange {
     public static void addCommentWithQueryNumber(String path) throws IOException {
-        String test = FileUtills.readFile(path);
+        String test = FileUtils.readFile(path);
         String queryStart = "<stringProp name=\"query\">";
         test=test.replace(queryStart, queryStart+"--QUERY X"+ "\n");
         Boolean end = true;
@@ -17,11 +21,11 @@ public class TestChange {
             }
             System.out.println("Queries changed: " + i);
         }
-       FileUtills.writeStringsToFile(test, path);
+       FileUtils.writeStringsToFile(test, path);
     }
 
     public static void generateExplains(String path) throws IOException {
-        String test = FileUtills.readFile(path);
+        String test = FileUtils.readFile(path);
 
     }
 }
