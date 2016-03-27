@@ -20,11 +20,14 @@ public class FileUtils {
 
     public static void writeStringsToFile(List<String> strings, String filePath) throws IOException {
         File file = new File(filePath);
+        if (file.exists())
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
         //noinspection ResultOfMethodCallIgnored
         file.getParentFile().mkdirs();
         PrintWriter fw = null;
         try {
-            fw = new PrintWriter(new BufferedWriter(new FileWriter(file, file.exists())));
+            fw = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
             for (String fileLine : strings)
                 fw.println(fileLine);
         } finally {
@@ -35,9 +38,8 @@ public class FileUtils {
 
     public static String readFile(String file) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line = null;
         StringBuilder stringBuilder = new StringBuilder();
-        String ls = System.getProperty("line.separator");
+        String line, ls = System.getProperty("line.separator");
 
         try {
             while ((line = reader.readLine()) != null) {
