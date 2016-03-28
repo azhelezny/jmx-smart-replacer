@@ -44,7 +44,7 @@ public class PlainTextUtils {
             for (Map.Entry<String, String> regexp : regexps.entrySet()) {
                 String replacement = regexp.getKey();
                 String replacer = regexp.getValue();
-                Pattern pattern = Pattern.compile(replacement, Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
+                Pattern pattern = Pattern.compile(replacement, Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(resString);
                 if (!matcher.find()) continue;
                 resString = matcher.replaceAll(replacer);

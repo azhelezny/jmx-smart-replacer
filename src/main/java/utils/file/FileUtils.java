@@ -29,7 +29,7 @@ public class FileUtils {
         try {
             fw = new PrintWriter(new BufferedWriter(new FileWriter(file, false)));
             for (String fileLine : strings)
-                fw.println(fileLine);
+                fw.print(fileLine);
         } finally {
             assert fw != null;
             fw.close();
@@ -68,5 +68,18 @@ public class FileUtils {
             assert fw != null;
             fw.close();
         }
+    }
+
+    public static List<String> getFileNamesFromDir(String dirName, final String mask){
+        File dir = new File(dirName);
+        File [] files = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+                return name.contains(mask);
+            }
+        });
+        List<String> result = new ArrayList<String>();
+        for (File file : files)
+            result.add(file.getAbsolutePath());
+        return result;
     }
 }
