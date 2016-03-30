@@ -14,11 +14,6 @@ import java.util.regex.Pattern;
  *         Date: 3/25/16
  */
 public class PlainTextUtils {
-    public static String createTableLexeme = "create[\\ ]+table[\\ ]+([\\w]+)";
-    public static String createTriggerLexeme = "create[\\ ]+trigger[\\ ]+([\\w]+)";
-
-    public static String nonQutedContentReplacementPattern = "(%s)";
-
 
     public static List<String> findAllOccurrencesWithRegexp(List<String> fileLines, List<String> lexemesRegex) {
         List<String> result = new ArrayList<String>();

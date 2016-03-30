@@ -14,6 +14,12 @@ import java.util.Map;
  */
 public class Changers {
 
+    public final static String createTableLexeme = "create[\\ ]+table[\\ ]+([\\w]+)";
+    public final static String createTriggerLexeme = "create[\\ ]+trigger[\\ ]+([\\w]+)";
+
+    public final static String nonQutedContentReplacementPattern = "([\\ ]+)(%s)";
+
+
     public final static String queryComment = "--QUERY X";
 
     public final static String queryFindRegex = "(<stringProp[\\ ]+name[\\ ]*=[\\ ]*\\\"query\\\">)(.*)";
@@ -66,12 +72,12 @@ public class Changers {
 
     public static List<String> addSchemas(List<String> fileContent) {
         List<String> lexemes = new ArrayList<String>();
-        lexemes.add(PlainTextUtils.createTableLexeme);
-        lexemes.add(PlainTextUtils.createTriggerLexeme);
+        lexemes.add(createTableLexeme);
+        lexemes.add(createTriggerLexeme);
         List<String> namesToReplace = PlainTextUtils.findAllOccurrencesWithRegexp(fileContent, lexemes);
         Map<String, String> replacementPatterns = new HashMap<String, String>();
         for (String name : namesToReplace)
-            replacementPatterns.put(String.format(PlainTextUtils.nonQutedContentReplacementPattern, name), "\\${SCHEMA}.$1");
+            replacementPatterns.put(String.format(nonQutedContentReplacementPattern, name), "$1\\${SCHEMA}.$2");
         return PlainTextUtils.doReplace(fileContent, replacementPatterns);
     }
 
