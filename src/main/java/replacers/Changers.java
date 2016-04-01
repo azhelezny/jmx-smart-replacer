@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Pavel on 3/23/16.
@@ -43,11 +45,61 @@ public class Changers {
                 test = test.replaceFirst("--QUERY X", "--QUERY " + i);
             } else {
                 end = false;
+                System.out.println("Queries changed: " + i);
             }
-            System.out.println("Queries changed: " + i);
         }
         FileUtils.writeStringsToFile(test, path);
     }
+
+    public static void removeAllComments(String path) throws IOException {
+        String test = FileUtils.readFile(path);
+        test = test.replaceAll("--.*\\n", "");
+        FileUtils.writeStringsToFile(test, path);
+        System.out.println("All comments removed");
+    }
+
+    public static void removeAllQueryNumbersFromTestName(String path) throws IOException {
+        String test = FileUtils.readFile(path);
+        test = test.replaceAll("\\[\\d\\]", "");
+        System.out.println("All QueryNumbers removed");
+        FileUtils.writeStringsToFile(test, path);
+    }
+
+    public static void addQuerryNumberToTestName(String path, boolean machQueryToTest) throws IOException {
+        String test = FileUtils.readFile(path);
+        test = test.replace("${", "DOLLAR");
+        String myString;
+        String replacementString;
+        String changeLineRegex = "<JDBCSampler.*testname=\"[^\\[].*";
+        String queryRegex = "<stringProp name=\"query\">(.*)<\\/stringProp>";
+        String queryInTestRegex = "<JDBCSampler.*testname=\"(.*?)\" enabled";
+
+        Boolean end = true;
+        for (int i=1; end; i++){
+
+            Pattern pattern = Pattern.compile(changeLineRegex);
+            Matcher matcher = pattern.matcher(test);
+            if (matcher.find()){
+                myString = matcher.group(0);
+
+                if(machQueryToTest) {
+                    String query = PlainTextUtils.getMathersGroup(test, queryRegex, 1);
+                    String tmpString = PlainTextUtils.getMathersGroup(test, queryInTestRegex, 1);
+
+                    myString = myString.replace(tmpString, query);
+                }
+                replacementString = myString.replace("testname=\"","testname=\"[" + i + "]");
+                test = test.replaceFirst(changeLineRegex, replacementString);
+            }else{
+                System.out.println("String number added to test name for " + (i-1) + " strings");
+                end = false;
+            }
+        }
+        test = test.replace("DOLLAR", "${");
+        FileUtils.writeStringsToFile(test, path);
+    }
+
+
 
     public static List<String> addCommentWithQueryNumberAlt(List<String> fileContent) throws IOException {
         Map<String, String> regexps = new HashMap<String, String>();

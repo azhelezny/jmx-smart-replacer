@@ -48,4 +48,14 @@ public class PlainTextUtils {
         }
         return result;
     }
+
+    public static String getMathersGroup(String where, String regex, int group) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(where);
+        String result = "";
+        if (matcher.find()){
+            result = matcher.group(group);
+        }
+        return result;
+    }
 }
