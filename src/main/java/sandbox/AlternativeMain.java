@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class AlternativeMain {
     public static void main(String[] args) throws IOException {
         String fileName = "/Users/azhelezny/projects/splice_machine/test/jmeter/src/test/jmeter/plain/functions/window/first_value/BOOLEAN_test.jmx";
-        String dirName = "/Users/azhelezny/projects/splice_machine/test/jmeter/src/test/jmeter/plain/constraints/primary_key/multiple_columns/modification";
+        String dirName = "/Users/azhelezny/projects/splice_machine/test/jmeter/src/test/jmeter/plain/functions/window/sum";
         List<String> files = FileUtils.getFileNamesFromDir(dirName, "_test.jmx");
         List<String> dataTypes = new ArrayList<String>();
         Pattern pattern = Pattern.compile("^([A-Z_]+)_");
@@ -40,7 +40,9 @@ public class AlternativeMain {
             if (dataTypes.get(i) != null) {
                 Map<String, String> replacer = new HashMap<String, String>();
                 //replacer.put("\\$\\{SCHEMA\\}", "\\${PRIMARY_KEYS_MULTIPLE_COLUMNS_" + dataTypes.get(i) + "_MODIFICATION_SCHEMA}");
-                replacer.put("Generate Summary Results", "Running: primary key " + dataTypes.get(i));
+
+                //replacer.put("run_queries", "Running: ROW_NUMBER " + dataTypes.get(i));
+                replacer.put("Generate Summary Results", "Running: SUM " + dataTypes.get(i));
                 fileContent = PlainTextUtils.doReplace(fileContent, replacer);
             }
             FileUtils.writeStringsToFile(fileContent, files.get(i));
