@@ -58,4 +58,34 @@ public class PlainTextUtils {
         }
         return result;
     }
+
+    public static List<String> splitToWords(String arg) {
+        String prepared = arg.replaceAll("\\|", "  ");
+        prepared = prepared.replaceAll("\\t", "    ");
+        prepared = prepared.replaceAll("[\\ ]+\\n", "\n");
+        List<String> result = new ArrayList<String>();
+        Pattern regex = Pattern.compile("([^\\ ]+)");
+        Matcher matcher = regex.matcher(prepared);
+        while (matcher.find())
+            result.add(matcher.group(0));
+        return result;
+    }
+
+    public static Map<String, String> compareLinesIgnoreCaseAndWhitespace(String line1, String line2) {
+        Map<String, String> result = new HashMap<String, String>();
+        List<String> lines1 = splitToWords(line1);
+        List<String> lines2 = splitToWords(line2);
+
+        int size = (lines1.size() > lines2.size()) ? lines2.size() : lines1.size();
+        if(lines1.size() != size)
+            result.put("line1 has extra words",String.valueOf(lines1.size() - size));
+        if(lines2.size() != size)
+            result.put("line2 has extra words",String.valueOf(lines2.size() - size));
+
+        for (int i = 0; i < size; i++) {
+            if (!lines1.get(i).toUpperCase().equals(lines2.get(i).toUpperCase()))
+                result.put("column "+ String.valueOf(i+1),"["+lines1.get(i) +"] <> ["+lines2.get(i)+"]");
+        }
+        return result;
+    }
 }

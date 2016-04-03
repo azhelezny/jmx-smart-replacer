@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Main {
 
     public static void main(String[] args) {
-        String filename = "/Users/Pavel/ideaProjects/test/jmeter/src/test/jmeter/import_p.jmx";
+        String filename = "/Users/azhelezny/projects/splice_machine/test/jmeter/src/test/jmeter/poc_workday.pishdrish";
 
         try {
             Changers.removeAllComments(filename);
