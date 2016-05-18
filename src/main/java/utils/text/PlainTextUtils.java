@@ -32,7 +32,8 @@ public class PlainTextUtils {
         return result;
     }
 
-    public static List<String> doReplace(List<String> content, Map<String, String> regexps) {
+    public static List<String> doSpeedReplace(List<String> content, Map<String, String> regexps){
+        long replacements = 0;
         List<String> result = new ArrayList<String>();
         for (String line : content) {
             String resString = line;
@@ -42,10 +43,32 @@ public class PlainTextUtils {
                 Pattern pattern = Pattern.compile(replacement, Pattern.CASE_INSENSITIVE);
                 Matcher matcher = pattern.matcher(resString);
                 if (!matcher.find()) continue;
+                replacements += 1;
                 resString = matcher.replaceAll(replacer);
             }
             result.add(resString);
         }
+        System.out.println("Replacements done: " + replacements);
+        return result;
+    }
+
+    public static List<String> doReplace(List<String> content, Map<String, String> regexps) {
+        long replacements = 0;
+        List<String> result = new ArrayList<String>();
+        for (String line : content) {
+            String resString = line;
+            for (Map.Entry<String, String> regexp : regexps.entrySet()) {
+                String replacement = regexp.getKey();
+                String replacer = regexp.getValue();
+                Pattern pattern = Pattern.compile(replacement, Pattern.CASE_INSENSITIVE);
+                Matcher matcher = pattern.matcher(resString);
+                if (!matcher.find()) continue;
+                replacements += 1;
+                resString = matcher.replaceAll(replacer);
+            }
+            result.add(resString);
+        }
+        System.out.println("Replacements done: " + replacements);
         return result;
     }
 
@@ -53,7 +76,7 @@ public class PlainTextUtils {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(where);
         String result = "";
-        if (matcher.find()){
+        if (matcher.find()) {
             result = matcher.group(group);
         }
         return result;
@@ -77,14 +100,14 @@ public class PlainTextUtils {
         List<String> lines2 = splitToWords(line2);
 
         int size = (lines1.size() > lines2.size()) ? lines2.size() : lines1.size();
-        if(lines1.size() != size)
-            result.put("line1 has extra words",String.valueOf(lines1.size() - size));
-        if(lines2.size() != size)
-            result.put("line2 has extra words",String.valueOf(lines2.size() - size));
+        if (lines1.size() != size)
+            result.put("line1 has extra words", String.valueOf(lines1.size() - size));
+        if (lines2.size() != size)
+            result.put("line2 has extra words", String.valueOf(lines2.size() - size));
 
         for (int i = 0; i < size; i++) {
             if (!lines1.get(i).toUpperCase().equals(lines2.get(i).toUpperCase()))
-                result.put("column "+ String.valueOf(i+1),"["+lines1.get(i) +"] <> ["+lines2.get(i)+"]");
+                result.put("column " + String.valueOf(i + 1), "[" + lines1.get(i) + "] <> [" + lines2.get(i) + "]");
         }
         return result;
     }

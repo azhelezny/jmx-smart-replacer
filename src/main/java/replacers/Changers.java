@@ -18,8 +18,9 @@ public class Changers {
 
     public final static String createTableLexeme = "create[\\ ]+table[\\ ]+([\\w]+)";
     public final static String createTriggerLexeme = "create[\\ ]+trigger[\\ ]+([\\w]+)";
+    public final static String createViewLexeme = "create[\\ ]+view[\\ ]+([\\w]+)";
 
-    public final static String nonQutedContentReplacementPattern = "([\\ ]+)(%s)";
+    public final static String nonQutedContentReplacementPattern = "([\\ ]+)(%s)([^\\w]+)";
 
 
     public final static String queryComment = "--QUERY X";
@@ -126,10 +127,11 @@ public class Changers {
         List<String> lexemes = new ArrayList<String>();
         lexemes.add(createTableLexeme);
         lexemes.add(createTriggerLexeme);
+        lexemes.add(createViewLexeme);
         List<String> namesToReplace = PlainTextUtils.findAllOccurrencesWithRegexp(fileContent, lexemes);
         Map<String, String> replacementPatterns = new HashMap<String, String>();
         for (String name : namesToReplace)
-            replacementPatterns.put(String.format(nonQutedContentReplacementPattern, name), "$1\\${SCHEMA}.$2");
+            replacementPatterns.put(String.format(nonQutedContentReplacementPattern, name), "$1\\${SCHEMA}.$2$3");
         return PlainTextUtils.doReplace(fileContent, replacementPatterns);
     }
 
