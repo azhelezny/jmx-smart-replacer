@@ -43,6 +43,9 @@ public class Changers {
         for (int i = 1; end; i++) {
             if (test.contains("--QUERY X")) {
                 test = test.replaceFirst("--QUERY X", "--QUERY " + i);
+                if (i%500==0){
+                    System.out.println("Queries changed: " + i);
+                }
             } else {
                 end = false;
                 System.out.println("Queries changed: " + i);
@@ -60,40 +63,18 @@ public class Changers {
 
     public static void removeAllQueryNumbersFromTestName(String path) throws IOException {
         String test = FileUtils.readFile(path);
-        test = test.replaceAll("\\[\\d\\]", "");
+        test = test.replaceAll("\\[\\d+\\]", "");
         System.out.println("All QueryNumbers removed");
         FileUtils.writeStringsToFile(test, path);
     }
 
-    public static void addQuerryNumberToTestName(String path, boolean machQueryToTest) throws IOException {
+
+    public static void addQuerryNumberToTestName(String path) throws IOException {
         String test = FileUtils.readFile(path);
         test = test.replace("${", "DOLLAR");
-        String myString;
-        String replacementString;
-        String changeLineRegex = "<JDBCSampler.*testname=\"[^\\[].*";
-        String queryRegex = "<stringProp name=\"query\">(.*)<\\/stringProp>";
-        String queryInTestRegex = "<JDBCSampler.*testname=\"(.*?)\" enabled";
-
-        Boolean end = true;
-        for (int i=1; end; i++){
-
-            Pattern pattern = Pattern.compile(changeLineRegex);
-            Matcher matcher = pattern.matcher(test);
-            if (matcher.find()){
-                myString = matcher.group(0);
-
-                if(machQueryToTest) {
-                    String query = PlainTextUtils.getMathersGroup(test, queryRegex, 1);
-                    String tmpString = PlainTextUtils.getMathersGroup(test, queryInTestRegex, 1);
-
-                    myString = myString.replace(tmpString, query);
-                }
-                replacementString = myString.replace("testname=\"","testname=\"[" + i + "]");
-                test = test.replaceFirst(changeLineRegex, replacementString);
-            }else{
-                System.out.println("String number added to test name for " + (i-1) + " strings");
-                end = false;
-            }
+        test = test.replaceAll("(?si)(<JDBCSampler.*?testname=\")([^\"]*)(.*?<stringProp name=\"query\">)(.*?)(</stringProp)(.*?</JDBCSampler)", "$1[]$4$3$4$5$6");
+        for (int i=1; test.contains("[]"); i++){
+            test = test.replaceFirst("\\[\\]", "[" + i + "]");
         }
         test = test.replace("DOLLAR", "${");
         FileUtils.writeStringsToFile(test, path);
