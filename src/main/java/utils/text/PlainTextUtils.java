@@ -1,11 +1,9 @@
 package utils.text;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import utils.file.FileUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +30,7 @@ public class PlainTextUtils {
         return result;
     }
 
-    public static List<String> doSpeedReplace(List<String> content, Map<String, String> regexps){
+    public static List<String> doSpeedReplace(List<String> content, Map<String, String> regexps) {
         long replacements = 0;
         List<String> result = new ArrayList<String>();
         for (String line : content) {
@@ -110,5 +108,69 @@ public class PlainTextUtils {
                 result.put("column " + String.valueOf(i + 1), "[" + lines1.get(i) + "] <> [" + lines2.get(i) + "]");
         }
         return result;
+    }
+
+    public static String getTextForName(String primaryName, int cutToLength) {
+        String unescapedPrimaryName = StringEscapeUtils.unescapeXml(primaryName);
+        Map<String, String> validCharacters = new HashMap<String, String>();
+        validCharacters.put("$", "$");
+        validCharacters.put(".", ".");
+        validCharacters.put(",", ",");
+        validCharacters.put("&", "&");
+        validCharacters.put("|", "|");
+        validCharacters.put(":", "|");
+        validCharacters.put(";", ";");
+        validCharacters.put("\"", "'");
+        validCharacters.put("'", "'");
+        validCharacters.put("-", "-");
+        validCharacters.put("+", "+");
+        validCharacters.put("*", "*");
+        validCharacters.put("/", "|");
+        validCharacters.put("=", "=");
+        validCharacters.put("<", "<");
+        validCharacters.put(">", ">");
+        validCharacters.put("{", "{");
+        validCharacters.put("}", "}");
+        validCharacters.put("[", "[");
+        validCharacters.put("]", "]");
+        validCharacters.put("(", "(");
+        validCharacters.put(")", ")");
+        validCharacters.put(" ", " ");
+        validCharacters.put("_", "_");
+
+        List<String> symbols = new ArrayList<String>();
+        for (int i = 0; i < unescapedPrimaryName.length(); i++) {
+            symbols.add(unescapedPrimaryName.substring(i, i + 1));
+        }
+
+        List<String> result = new ArrayList<String>();
+        for (String symbol : symbols) {
+            if (!Character.isLetterOrDigit(symbol.charAt(0)))
+                if (!validCharacters.keySet().contains(symbol))
+                    continue;
+            if (validCharacters.keySet().contains(symbol))
+                result.add(validCharacters.get(symbol));
+            else
+                result.add(symbol);
+        }
+
+        int len = (result.size() < cutToLength) ? result.size() : cutToLength;
+        StringBuilder returnedResult = new StringBuilder();
+        boolean isVarNameOpened = false;
+        for (int i = 0; i < len; i++) {
+            String currentStr = result.get(i);
+            if (currentStr.equals("$"))
+                if (i < result.size() - 1)
+                    if (result.get(i).equals("{"))
+                        isVarNameOpened = true;
+            if (isVarNameOpened && currentStr.equals("}"))
+                isVarNameOpened = false;
+
+            if (isVarNameOpened && i == len - 1)//last iteration
+                len += 1;
+            returnedResult.append(result.get(i));
+        }
+
+        return StringEscapeUtils.escapeXml(returnedResult.toString());
     }
 }

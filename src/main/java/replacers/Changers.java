@@ -27,6 +27,9 @@ public class Changers {
 
     public final static String queryFindRegex = "(<stringProp[\\ ]+name[\\ ]*=[\\ ]*\\\"query\\\">)(.*)";
 
+    public final static int samplerNameMaxLength = 100;
+    public final static String samplerNameRegex = "(JDBCSampler)(.*)(testname\\s*=\\s*\\\")(.*?)(\\\")";
+
     public final static String queryWithoutGlobalNumberRegex = "(<JDBCSampler)(.*)(testname=\\\")([\\ ]*[\\w]+)";
     public final static String queryWithoutGlobalNumberReplacer = "$1$2$3[1] $4";
 
@@ -82,6 +85,24 @@ public class Changers {
     }
 
 
+    public static List<String> shrinkSamplerNames(List<String> fileContent) {
+        int replacementsCount = 0;
+        List<String> result = new ArrayList<String>();
+        Pattern pattern = Pattern.compile(samplerNameRegex);
+        for (String str : fileContent) {
+            Matcher m = pattern.matcher(str);
+            if (m.find()) {
+                String processing = PlainTextUtils.getTextForName(m.group(4), samplerNameMaxLength).replace("$", "\\$");
+                String shortName = PlainTextUtils.getTextForName(m.group(4), samplerNameMaxLength).replace("$", "\\$");
+                result.add(str.replaceAll(samplerNameRegex, "$1$2$3" + shortName + "$5"));
+                replacementsCount += 1;
+                continue;
+            }
+            result.add(str);
+        }
+        System.out.println("Shrinks count: " + replacementsCount);
+        return result;
+    }
 
     public static List<String> addCommentWithQueryNumberAlt(List<String> fileContent) throws IOException {
         Map<String, String> regexps = new HashMap<String, String>();
