@@ -161,7 +161,7 @@ public class PlainTextUtils {
             String currentStr = result.get(i);
             if (currentStr.equals("$"))
                 if (i < result.size() - 1)
-                    if (result.get(i).equals("{"))
+                    if (result.get(i + 1).equals("{"))
                         isVarNameOpened = true;
             if (isVarNameOpened && currentStr.equals("}"))
                 isVarNameOpened = false;
