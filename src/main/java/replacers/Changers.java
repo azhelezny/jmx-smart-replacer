@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
  * @author Pavel on 3/23/16.
  */
 public class Changers {
-
     public final static String createTableLexeme = "create[\\ ]+table[\\ ]+([\\w]+)";
     public final static String createTriggerLexeme = "create[\\ ]+trigger[\\ ]+([\\w]+)";
     public final static String createViewLexeme = "create[\\ ]+view[\\ ]+([\\w]+)";
