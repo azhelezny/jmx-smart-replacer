@@ -27,7 +27,7 @@ public class Changers {
     public final static String queryFindRegex = "(<stringProp[\\ ]+name[\\ ]*=[\\ ]*\\\"query\\\">)(.*)";
 
     public final static int samplerNameMaxLength = 100;
-    public final static String samplerNameRegex = "(JDBCSampler)(.*?)(testname\\s*=\\s*\\\")(.*?)(\\\")";
+    public final static String samplerNameRegex = "(?si)(JDBCSampler)(.*?)(testname\\s*=\\s*\")(.*?)(\")(.*?)(JDBCSampler)";
 
     public final static String queryWithoutGlobalNumberRegex = "(<JDBCSampler)(.*)(testname=\\\")([\\ ]*[\\w]+)";
     public final static String queryWithoutGlobalNumberReplacer = "$1$2$3[1] $4";
@@ -94,11 +94,11 @@ public class Changers {
             replacements.put(replacementFormat + replacementsCount, matcher.group(4));
             replacementsCount += 1;
         }
-        fileContent = fileContent.replaceAll(samplerNameRegex, "$1$2$3" + replacementFormat + "$5");
-        for (int i = 0; i < replacementsCount; i++)
+        fileContent = fileContent.replaceAll(samplerNameRegex, "$1$2$3" + replacementFormat + "$5$6$7");
+        for (int i = 0; i < replacementsCount; i++) {
             fileContent = fileContent.replaceFirst(replacementFormat,
-                    PlainTextUtils.getTextForName(replacements.get(replacementFormat + String.valueOf(i)), samplerNameMaxLength).replace("$","\\$"));
-
+                    PlainTextUtils.getTextForName(replacements.get(replacementFormat + String.valueOf(i)), samplerNameMaxLength).replace("$", "\\$"));
+        }
         FileUtils.writeStringsToFile(fileContent, outputFilePath);
         System.out.println("Processed strings: " + replacementsCount);
     }
