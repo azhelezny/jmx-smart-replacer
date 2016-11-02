@@ -14,10 +14,14 @@ public class AlternativeMain {
     public static void main(String[] args) throws IOException {
 
         String dirName = "/Users/azhelezny/projects/splice_machine/test-jmeter/src/test/jmeter";
-        String fileShortName = "_joins";
+        String fileShortName = "window-functions-escalations";
         String fileName = fileShortName + ".jmx";
         String filePath = dirName + "/" + fileName;
+
+
         Changers.removeAllQueryNumbersFromTestName(filePath);
+        Changers.removeAllComments(filePath);
+
         Changers.addQuerryNumberToTestName(filePath);
         Changers.addCommentWithQueryNumber(filePath);
         Changers.shrinkSamplerNames(filePath, filePath);

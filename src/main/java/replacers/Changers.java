@@ -59,14 +59,14 @@ public class Changers {
 
     public static void removeAllComments(String path) throws IOException {
         String test = FileUtils.readFile(path);
-        test = test.replaceAll("--.*\\n", "");
+        test = test.replaceAll("--QUERY\\s*\\d+\\s*\\n", "");
         FileUtils.writeStringsToFile(test, path);
         System.out.println("All comments removed");
     }
 
     public static void removeAllQueryNumbersFromTestName(String path) throws IOException {
         String test = FileUtils.readFile(path);
-        test = test.replaceAll("\\[\\d+\\]", "");
+        test = test.replaceAll("\"\\s*\\[\\d+\\]", "\"");
         System.out.println("All QueryNumbers removed");
         FileUtils.writeStringsToFile(test, path);
     }
