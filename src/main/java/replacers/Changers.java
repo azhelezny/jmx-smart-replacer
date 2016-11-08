@@ -1,5 +1,7 @@
 package replacers;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import utils.file.FileUtils;
 import utils.text.PlainTextUtils;
 
@@ -81,6 +83,16 @@ public class Changers {
         }
         test = test.replace("DOLLAR", "${");
         FileUtils.writeStringsToFile(test, path);
+    }
+
+    public static List<String> findAllQueries(String path) throws IOException {
+        String test = FileUtils.readFile(path);
+        List<String> result = new ArrayList<String>();
+        Matcher m = Pattern.compile("(?si)(<JDBCSampler.*?testname=\")([^\"]*)(.*?<stringProp name=\"query\">)(.*?)(</stringProp)(.*?</JDBCSampler)").matcher(test);
+        while (m.find()) {
+            result.add(StringEscapeUtils.unescapeXml(m.group(4)) + ";\n");
+        }
+        return result;
     }
 
 
